@@ -7,18 +7,15 @@
   <script>
     // Fungsi untuk menyimpan data ke GitHub
     async function simpanDataGitHub(data) {
-      const token = 'SuratKeluar'; // Ganti dengan Personal Access Token Anda
+      const token = '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'; // Token Anda, ini akan lebih aman jika menggunakan .env
       const repoOwner = 'sdndonggalakodi'; // Ganti dengan nama pengguna GitHub Anda
       const repoName = 'suratkeluar'; // Ganti dengan nama repositori Anda
       const filePath = 'data/surat_keluar.json'; // Jalur file di repositori GitHub
 
-      // Memasukkan data yang sudah diserialisasi ke dalam file JSON
       const fileData = JSON.stringify(data);
-
-      // GitHub API URL untuk membuat atau memperbarui file di repositori
       const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
 
-      // Mendapatkan informasi file jika ada sebelumnya (untuk mendapatkan sha file)
+      // Mendapatkan sha file jika ada sebelumnya
       const currentFile = await fetch(apiUrl, {
         method: 'GET',
         headers: {
@@ -28,14 +25,12 @@
 
       const sha = currentFile?.sha;
 
-      // Data untuk API request
       const bodyData = {
         message: sha ? 'Memperbarui data surat keluar' : 'Menambahkan data surat keluar',
         content: btoa(fileData), // Mengonversi fileData ke base64
         ...(sha && { sha }) // Menambahkan sha jika file sudah ada
       };
 
-      // Mengirimkan permintaan ke GitHub API untuk menyimpan data
       const response = await fetch(apiUrl, {
         method: 'PUT',
         headers: {
@@ -54,15 +49,13 @@
 
     // Fungsi untuk memuat data dari GitHub
     async function loadDataGitHub() {
-      const token = 'SuratKeluar'; // Ganti dengan Personal Access Token Anda
+      const token = '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'; // Token Anda
       const repoOwner = 'sdndonggalakodi'; // Ganti dengan nama pengguna GitHub Anda
       const repoName = 'suratkeluar'; // Ganti dengan nama repositori Anda
       const filePath = 'data/surat_keluar.json'; // Jalur file di repositori GitHub
 
-      // GitHub API URL untuk mengambil file
       const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
 
-      // Mendapatkan file JSON dari GitHub
       const response = await fetch(apiUrl, {
         headers: {
           'Authorization': `token ${token}`,
@@ -79,7 +72,7 @@
       }
     }
 
-    // Contoh fungsi tambah surat yang terintegrasi dengan GitHub
+    // Fungsi untuk menambah surat
     async function tambahSurat() {
       const tanggal = document.getElementById("tanggal").value;
       const nomor = document.getElementById("nomor").value;
@@ -119,7 +112,7 @@
       }
     }
 
-    // Fungsi untuk memuat data dari GitHub dan menampilkannya
+    // Fungsi untuk memuat data saat halaman dimuat
     window.onload = async function() {
       const data = await loadDataGitHub();
       const table = document.getElementById("tabelSurat");
@@ -142,8 +135,38 @@
   </script>
 </head>
 <body>
+  <h1>Surat Keluar SD Negeri Donggala Kodi</h1>
+  <form id="suratForm">
+    <label for="tanggal">Tanggal:</label>
+    <input type="date" id="tanggal" required><br><br>
+    
+    <label for="nomor">Nomor Surat:</label>
+    <input type="text" id="nomor" required><br><br>
 
-  <!-- Form Input Surat dan Tabel seperti sebelumnya -->
+    <label for="perihal">Perihal:</label>
+    <input type="text" id="perihal" required><br><br>
 
+    <label for="tujuan">Tujuan:</label>
+    <input type="text" id="tujuan" required><br><br>
+
+    <button type="button" onclick="tambahSurat()">Tambah Surat</button>
+  </form>
+
+  <h2>Daftar Surat Keluar</h2>
+  <table id="tabelSurat" border="1">
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Tanggal</th>
+        <th>Nomor Surat</th>
+        <th>Perihal</th>
+        <th>Tujuan</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Data surat akan ditampilkan di sini -->
+    </tbody>
+  </table>
 </body>
 </html>
