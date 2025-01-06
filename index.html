@@ -28,33 +28,39 @@
       border-color: #d50000;
     }
 
+    /* Styling untuk Tabel */
     table {
       margin-top: 20px;
     }
 
     thead {
-      background-color: #d50000;
+      background-color: #d50000; /* Merah */
       color: white;
     }
 
+    tbody {
+      background-color: #d50000; /* Merah */
+    }
+
+    .table td, .table th {
+      color: white; /* Teks berwarna putih */
+      vertical-align: middle;
+    }
+
     .table-striped tbody tr:nth-of-type(odd) {
-      background-color: #f8f8f8;
+      background-color: #b71c1c; /* Merah lebih gelap untuk baris ganjil */
     }
 
     .table-hover tbody tr:hover {
-      background-color: #ffebee;
+      background-color: #ffebee; /* Warna saat hover */
     }
 
     .form-label {
       color: #d50000; /* Merah */
     }
 
-    .table td, .table th {
-      vertical-align: middle;
-    }
-
     .action-links a {
-      color: #d50000;
+      color: white;
       text-decoration: none;
       margin: 0 10px;
     }
@@ -62,6 +68,11 @@
     .action-links a:hover {
       text-decoration: underline;
     }
+
+    .table th, .table td {
+      text-align: center;
+    }
+
   </style>
 </head>
 <body>
@@ -94,6 +105,9 @@
 
   <!-- Pencarian -->
   <input type="text" id="search" class="form-control mb-3" placeholder="Cari data..." onkeyup="cariData()">
+
+  <!-- Tombol untuk Mengurutkan Data -->
+  <button type="button" class="btn btn-secondary mb-3" onclick="urutkanData()">Urutkan Nomor Surat (Terbesar ke Terkecil)</button>
 
   <!-- Tabel Surat Keluar -->
   <table class="table table-striped table-hover">
@@ -202,6 +216,23 @@
       document.getElementById("tujuan").value = cells[4].innerText;
 
       hapusData(elemen);
+    }
+
+    // Fungsi untuk Mengurutkan Nomor Surat dari yang Terbesar
+    function urutkanData() {
+      const table = document.getElementById("tabelSurat");
+      const rows = Array.from(table.rows);
+
+      // Urutkan berdasarkan nomor surat
+      rows.sort((a, b) => {
+        const nomorA = a.cells[2]?.innerText || 0;
+        const nomorB = b.cells[2]?.innerText || 0;
+        return nomorB - nomorA; // Urutkan dari terbesar
+      });
+
+      // Bersihkan tabel dan masukkan kembali urutan yang sudah diurutkan
+      rows.forEach(row => table.appendChild(row));
+      simpanData();
     }
 
     window.onload = loadData;
