@@ -4,173 +4,83 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Surat Keluar SD Negeri Donggala Kodi</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <style>
-    body {
-      background-color: #f8f9fa;
-      font-family: 'Arial', sans-serif;
-    }
-
-    h2, h4 {
-      color: #d50000; /* Merah */
-      font-weight: 600;
-    }
-
-    .btn-primary {
-      background-color: #d50000;
-      border-color: #b71c1c;
-      transition: all 0.3s ease;
-    }
-
-    .btn-primary:hover {
-      background-color: #b71c1c;
-      border-color: #d50000;
-      transform: scale(1.05);
-    }
-
-    .card {
-      border-radius: 15px;
-      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-      margin-top: 20px;
-    }
-
-    .card-header {
-      background-color: #d50000;
-      color: white;
-      font-size: 1.25rem;
-    }
-
-    .form-label {
-      color: #d50000;
-    }
-
-    table {
-      margin-top: 20px;
-    }
-
-    thead {
-      background-color: #d50000;
-      color: white;
-    }
-
-    tbody {
-      background-color: #ffffff;
-    }
-
-    .table td, .table th {
-      color: #333;
-      vertical-align: middle;
-    }
-
-    .table-striped tbody tr:nth-of-type(odd) {
-      background-color: #f2f2f2;
-    }
-
-    .table-hover tbody tr:hover {
-      background-color: #ffebee;
-      cursor: pointer;
-    }
-
-    .action-links a {
-      color: #d50000;
-      text-decoration: none;
-    }
-
-    .action-links a:hover {
-      text-decoration: underline;
-    }
-
-    .table th, .table td {
-      text-align: center;
-    }
-
-    .btn-secondary {
-      background-color: #009688;
-      border-color: #00796b;
-      transition: all 0.3s ease;
-    }
-
-    .btn-secondary:hover {
-      background-color: #00796b;
-      border-color: #009688;
-      transform: scale(1.05);
-    }
-
-    .form-control {
-      border-radius: 10px;
-      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-  </style>
-</head>
-<body>
-
-  <div class="container">
-    <h2 class="text-center mt-5">Surat Keluar SD Negeri Donggala Kodi</h2>
-
-    <!-- Card untuk Form Input -->
-    <div class="card">
-      <div class="card-header text-center">
-        <strong>Tambah Surat Keluar</strong>
-      </div>
-      <div class="card-body">
-        <form id="suratForm" class="row g-3">
-          <div class="col-md-3">
-            <label for="tanggal" class="form-label">Tanggal Surat</label>
-            <input type="date" class="form-control" id="tanggal" required>
-          </div>
-          <div class="col-md-3">
-            <label for="nomor" class="form-label">Nomor Surat</label>
-            <input type="text" class="form-control" id="nomor" required>
-          </div>
-          <div class="col-md-3">
-            <label for="perihal" class="form-label">Perihal</label>
-            <input type="text" class="form-control" id="perihal" required>
-          </div>
-          <div class="col-md-3">
-            <label for="tujuan" class="form-label">Tujuan</label>
-            <input type="text" class="form-control" id="tujuan" required>
-          </div>
-          <div class="col-12">
-            <button type="button" class="btn btn-primary" onclick="tambahSurat()">Tambah</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Pencarian -->
-    <input type="text" id="search" class="form-control mb-3" placeholder="Cari data..." onkeyup="cariData()">
-
-    <!-- Tombol untuk Mengurutkan Data -->
-    <button type="button" class="btn btn-secondary mb-3" onclick="urutkanData()">Urutkan Nomor Surat (Terbesar ke Terkecil)</button>
-
-    <!-- Tabel Surat Keluar -->
-    <div class="card">
-      <div class="card-body">
-        <table class="table table-striped table-hover">
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Tanggal Surat</th>
-              <th>Nomor Surat</th>
-              <th>Perihal</th>
-              <th>Tujuan</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="tabelSurat">
-            <!-- Data surat akan muncul di sini -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- Script untuk Fungsi Dinamis -->
   <script>
-    // Menambah data ke dalam tabel dan menyimpannya di Local Storage
-    function tambahSurat() {
+    // Fungsi untuk menyimpan data ke GitHub
+    async function simpanDataGitHub(data) {
+      const token = 'SuratKeluar'; // Ganti dengan Personal Access Token Anda
+      const repoOwner = 'sdndonggalakodi'; // Ganti dengan nama pengguna GitHub Anda
+      const repoName = 'suratkeluar'; // Ganti dengan nama repositori Anda
+      const filePath = 'data/surat_keluar.json'; // Jalur file di repositori GitHub
+
+      // Memasukkan data yang sudah diserialisasi ke dalam file JSON
+      const fileData = JSON.stringify(data);
+
+      // GitHub API URL untuk membuat atau memperbarui file di repositori
+      const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+
+      // Mendapatkan informasi file jika ada sebelumnya (untuk mendapatkan sha file)
+      const currentFile = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `token ${token}`,
+        },
+      }).then(response => response.json()).catch(err => null);
+
+      const sha = currentFile?.sha;
+
+      // Data untuk API request
+      const bodyData = {
+        message: sha ? 'Memperbarui data surat keluar' : 'Menambahkan data surat keluar',
+        content: btoa(fileData), // Mengonversi fileData ke base64
+        ...(sha && { sha }) // Menambahkan sha jika file sudah ada
+      };
+
+      // Mengirimkan permintaan ke GitHub API untuk menyimpan data
+      const response = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `token ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bodyData),
+      });
+
+      if (response.ok) {
+        console.log('Data berhasil disimpan ke GitHub');
+      } else {
+        console.error('Gagal menyimpan data ke GitHub');
+      }
+    }
+
+    // Fungsi untuk memuat data dari GitHub
+    async function loadDataGitHub() {
+      const token = 'YOUR_TOKEN'; // Ganti dengan Personal Access Token Anda
+      const repoOwner = 'YOUR_USERNAME'; // Ganti dengan nama pengguna GitHub Anda
+      const repoName = 'YOUR_REPO'; // Ganti dengan nama repositori Anda
+      const filePath = 'data/surat_keluar.json'; // Jalur file di repositori GitHub
+
+      // GitHub API URL untuk mengambil file
+      const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+
+      // Mendapatkan file JSON dari GitHub
+      const response = await fetch(apiUrl, {
+        headers: {
+          'Authorization': `token ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const content = atob(data.content); // Mendekodekan isi file base64
+        return JSON.parse(content);
+      } else {
+        console.error('Gagal memuat data dari GitHub');
+        return [];
+      }
+    }
+
+    // Contoh fungsi tambah surat yang terintegrasi dengan GitHub
+    async function tambahSurat() {
       const tanggal = document.getElementById("tanggal").value;
       const nomor = document.getElementById("nomor").value;
       const perihal = document.getElementById("perihal").value;
@@ -192,30 +102,26 @@
         `;
         table.appendChild(row);
 
-        simpanData();
+        // Ambil data yang ada di tabel
+        const data = Array.from(table.rows).map(row => ({
+          no: row.cells[0].innerText,
+          tanggal: row.cells[1].innerText,
+          nomor: row.cells[2].innerText,
+          perihal: row.cells[3].innerText,
+          tujuan: row.cells[4].innerText
+        }));
+
+        // Simpan data ke GitHub
+        await simpanDataGitHub(data);
         document.getElementById("suratForm").reset();
       } else {
         alert("Harap isi semua data!");
       }
     }
 
-    // Menyimpan data ke Local Storage
-    function simpanData() {
-      const table = document.getElementById("tabelSurat");
-      const data = Array.from(table.rows).map(row => ({
-        no: row.cells[0].innerText,
-        tanggal: row.cells[1].innerText,
-        nomor: row.cells[2].innerText,
-        perihal: row.cells[3].innerText,
-        tujuan: row.cells[4].innerText
-      }));
-
-      localStorage.setItem("agendaSurat", JSON.stringify(data));
-    }
-
-    // Memuat data dari Local Storage
-    function loadData() {
-      const data = JSON.parse(localStorage.getItem("agendaSurat")) || [];
+    // Fungsi untuk memuat data dari GitHub dan menampilkannya
+    window.onload = async function() {
+      const data = await loadDataGitHub();
       const table = document.getElementById("tabelSurat");
 
       data.forEach((item, index) => {
@@ -233,56 +139,11 @@
         table.appendChild(row);
       });
     }
-
-    // Fungsi pencarian
-    function cariData() {
-      const input = document.getElementById("search").value.toLowerCase();
-      const rows = document.querySelectorAll("table tbody tr");
-
-      rows.forEach(row => {
-        const text = row.innerText.toLowerCase();
-        row.style.display = text.includes(input) ? "" : "none";
-      });
-    }
-
-    // Fungsi menghapus data
-    function hapusData(elemen) {
-      const row = elemen.parentElement.parentElement;
-      row.remove();
-      simpanData();
-    }
-
-    // Fungsi mengedit data
-    function editData(elemen) {
-      const row = elemen.parentElement.parentElement;
-      const cells = row.getElementsByTagName("td");
-
-      document.getElementById("tanggal").value = cells[1].innerText;
-      document.getElementById("nomor").value = cells[2].innerText;
-      document.getElementById("perihal").value = cells[3].innerText;
-      document.getElementById("tujuan").value = cells[4].innerText;
-
-      hapusData(elemen);
-    }
-
-    // Fungsi untuk Mengurutkan Nomor Surat dari yang Terbesar
-    function urutkanData() {
-      const table = document.getElementById("tabelSurat");
-      const rows = Array.from(table.rows);
-
-      rows.sort((a, b) => {
-        const nomorA = a.cells[2]?.innerText || 0;
-        const nomorB = b.cells[2]?.innerText || 0;
-        return nomorB - nomorA; // Urutkan dari terbesar
-      });
-
-      rows.forEach(row => table.appendChild(row));
-      simpanData();
-    }
-
-    // Memuat data saat halaman pertama kali dimuat
-    window.onload = loadData;
   </script>
+</head>
+<body>
+
+  <!-- Form Input Surat dan Tabel seperti sebelumnya -->
 
 </body>
 </html>
