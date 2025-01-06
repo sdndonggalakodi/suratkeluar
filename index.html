@@ -1,62 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agenda Surat Keluar</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
       margin: 20px;
-      padding: 0;
-      background-color: #f9f9f9;
-      color: #333;
-    }
-    h1 {
-      text-align: center;
-      color: #4CAF50;
     }
     table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px 0;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: center;
-    }
-    th {
-      background-color: #4CAF50;
-      color: white;
-    }
-    tr:nth-child(even) {
-      background-color: #f2f2f2;
-    }
-    tr:hover {
-      background-color: #ddd;
-    }
-    .add-btn {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      text-align: center;
-    }
-    .add-btn:hover {
-      background-color: #45a049;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <h1>Agenda Surat Keluar</h1>
-  
-  <a href="#" class="add-btn">Tambah Surat Keluar</a>
 
-  <table>
-    <thead>
+  <h2>Agenda Surat Keluar</h2>
+
+  <!-- Form Input -->
+  <h4>Tambah Surat Keluar</h4>
+  <form id="suratForm" class="row g-3">
+    <div class="col-md-3">
+      <label for="tanggal" class="form-label">Tanggal Surat</label>
+      <input type="date" class="form-control" id="tanggal" required>
+    </div>
+    <div class="col-md-3">
+      <label for="nomor" class="form-label">Nomor Surat</label>
+      <input type="text" class="form-control" id="nomor" required>
+    </div>
+    <div class="col-md-3">
+      <label for="perihal" class="form-label">Perihal</label>
+      <input type="text" class="form-control" id="perihal" required>
+    </div>
+    <div class="col-md-3">
+      <label for="tujuan" class="form-label">Tujuan</label>
+      <input type="text" class="form-control" id="tujuan" required>
+    </div>
+    <div class="col-12">
+      <button type="button" class="btn btn-primary" onclick="tambahSurat()">Tambah</button>
+    </div>
+  </form>
+
+  <!-- Pencarian -->
+  <input type="text" id="search" class="form-control mb-3" placeholder="Cari data..." onkeyup="cariData()">
+
+  <!-- Tabel Surat Keluar -->
+  <table class="table table-striped table-hover">
+    <thead class="table-dark">
       <tr>
         <th>No</th>
         <th>Tanggal Surat</th>
@@ -66,24 +58,111 @@
         <th>Aksi</th>
       </tr>
     </thead>
-    <tbody>
-      <tr>
-        <td>1</td>
-        <td>2025-01-06</td>
-        <td>001/SK/I/2025</td>
-        <td>Undangan Rapat</td>
-        <td>PT ABC Indonesia</td>
-        <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td>2025-01-05</td>
-        <td>002/SK/I/2025</td>
-        <td>Pengajuan Kerjasama</td>
-        <td>PT XYZ Jaya</td>
-        <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
-      </tr>
+    <tbody id="tabelSurat">
+      <!-- Data surat akan muncul di sini -->
     </tbody>
   </table>
+
+  <!-- Script untuk Fungsi Dinamis -->
+  <script>
+    // Fungsi untuk menambah data surat ke tabel
+    function tambahSurat() {
+      const tanggal = document.getElementById("tanggal").value;
+      const nomor = document.getElementById("nomor").value;
+      const perihal = document.getElementById("perihal").value;
+      const tujuan = document.getElementById("tujuan").value;
+
+      if (tanggal && nomor && perihal && tujuan) {
+        const table = document.getElementById("tabelSurat");
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>${table.rows.length + 1}</td>
+          <td>${tanggal}</td>
+          <td>${nomor}</td>
+          <td>${perihal}</td>
+          <td>${tujuan}</td>
+          <td><a href="#" onclick="editData(this)">Edit</a> | <a href="#" onclick="hapusData(this)">Hapus</a></td>
+        `;
+        table.appendChild(row);
+
+        // Simpan data ke localStorage
+        simpanData();
+
+        // Reset form
+        document.getElementById("suratForm").reset();
+      } else {
+        alert("Harap isi semua data!");
+      }
+    }
+
+    // Fungsi untuk menyimpan data ke localStorage
+    function simpanData() {
+      const table = document.getElementById("tabelSurat");
+      const data = Array.from(table.rows).map(row => ({
+        no: row.cells[0].innerText,
+        tanggal: row.cells[1].innerText,
+        nomor: row.cells[2].innerText,
+        perihal: row.cells[3].innerText,
+        tujuan: row.cells[4].innerText
+      }));
+
+      localStorage.setItem("agendaSurat", JSON.stringify(data));
+    }
+
+    // Fungsi untuk memuat data dari localStorage
+    function loadData() {
+      const data = JSON.parse(localStorage.getItem("agendaSurat")) || [];
+      const table = document.getElementById("tabelSurat");
+
+      data.forEach((item, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${item.tanggal}</td>
+          <td>${item.nomor}</td>
+          <td>${item.perihal}</td>
+          <td>${item.tujuan}</td>
+          <td><a href="#" onclick="editData(this)">Edit</a> | <a href="#" onclick="hapusData(this)">Hapus</a></td>
+        `;
+        table.appendChild(row);
+      });
+    }
+
+    // Fungsi untuk mencari data dalam tabel
+    function cariData() {
+      const input = document.getElementById("search").value.toLowerCase();
+      const rows = document.querySelectorAll("table tbody tr");
+
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(input) ? "" : "none";
+      });
+    }
+
+    // Fungsi untuk menghapus data
+    function hapusData(elemen) {
+      const row = elemen.parentElement.parentElement;
+      row.remove();
+      simpanData(); // Update localStorage setelah data dihapus
+    }
+
+    // Fungsi untuk mengedit data
+    function editData(elemen) {
+      const row = elemen.parentElement.parentElement;
+      const cells = row.getElementsByTagName("td");
+
+      document.getElementById("tanggal").value = cells[1].innerText;
+      document.getElementById("nomor").value = cells[2].innerText;
+      document.getElementById("perihal").value = cells[3].innerText;
+      document.getElementById("tujuan").value = cells[4].innerText;
+
+      hapusData(elemen); // Hapus data yang sedang diedit dari tabel
+    }
+
+    // Load data saat halaman dimuat
+    window.onload = loadData;
+  </script>
+
 </body>
 </html>
