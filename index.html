@@ -4,168 +4,106 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Surat Keluar SD Negeri Donggala Kodi</title>
+  
+  <!-- Menambahkan Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+  
   <script>
-    // Fungsi untuk menyimpan data ke GitHub
-    async function simpanDataGitHub(data) {
-      const token = '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'; // Token Anda, ini akan lebih aman jika menggunakan .env
-      const repoOwner = 'sdndonggalakodi'; // Ganti dengan nama pengguna GitHub Anda
-      const repoName = 'suratkeluar'; // Ganti dengan nama repositori Anda
-      const filePath = 'data/surat_keluar.json'; // Jalur file di repositori GitHub
+    // Konfigurasi Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBSE3EoOymmQTgGJ_7xos__UtwVafFpBrI",
+      authDomain: "suratkeluar-aa247.firebaseapp.com",
+      databaseURL: "https://suratkeluar-aa247-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "suratkeluar-aa247",
+      storageBucket: "suratkeluar-aa247.firebasestorage.app",
+      messagingSenderId: "805178354709",
+      appId: "1:805178354709:web:a36b8a4461b5b59f6d321c",
+      measurementId: "G-BPNG0E9XED"
+    };
 
-      const fileData = JSON.stringify(data);
-      const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+    // Inisialisasi Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database(app);
 
-      // Mendapatkan sha file jika ada sebelumnya
-      const currentFile = await fetch(apiUrl, {
-        method: 'GET',
-        headers: {
-          'Authorization': `token ${token}`,
-        },
-      }).then(response => response.json()).catch(err => null);
-
-      const sha = currentFile?.sha;
-
-      const bodyData = {
-        message: sha ? 'Memperbarui data surat keluar' : 'Menambahkan data surat keluar',
-        content: btoa(fileData), // Mengonversi fileData ke base64
-        ...(sha && { sha }) // Menambahkan sha jika file sudah ada
-      };
-
-      const response = await fetch(apiUrl, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `token ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(bodyData),
-      });
-
-      if (response.ok) {
-        console.log('Data berhasil disimpan ke GitHub');
-      } else {
-        console.error('Gagal menyimpan data ke GitHub');
-      }
-    }
-
-    // Fungsi untuk memuat data dari GitHub
-    async function loadDataGitHub() {
-      const token = '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'; // Token Anda
-      const repoOwner = 'sdndonggalakodi'; // Ganti dengan nama pengguna GitHub Anda
-      const repoName = 'suratkeluar'; // Ganti dengan nama repositori Anda
-      const filePath = 'data/surat_keluar.json'; // Jalur file di repositori GitHub
-
-      const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
-
-      const response = await fetch(apiUrl, {
-        headers: {
-          'Authorization': `token ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const content = atob(data.content); // Mendekodekan isi file base64
-        return JSON.parse(content);
-      } else {
-        console.error('Gagal memuat data dari GitHub');
-        return [];
-      }
-    }
-
-    // Fungsi untuk menambah surat
-    async function tambahSurat() {
+    // Fungsi untuk menyimpan data ke Firebase
+    function saveData() {
       const tanggal = document.getElementById("tanggal").value;
       const nomor = document.getElementById("nomor").value;
       const perihal = document.getElementById("perihal").value;
       const tujuan = document.getElementById("tujuan").value;
 
       if (tanggal && nomor && perihal && tujuan) {
-        const table = document.getElementById("tabelSurat");
-        const row = document.createElement("tr");
+        const newDataRef = database.ref('suratkeluar').push();
+        newDataRef.set({
+          tanggal: tanggal,
+          nomor: nomor,
+          perihal: perihal,
+          tujuan: tujuan
+        });
 
-        row.innerHTML = `
-          <td>${table.rows.length + 1}</td>
-          <td>${tanggal}</td>
-          <td>${nomor}</td>
-          <td>${perihal}</td>
-          <td>${tujuan}</td>
-          <td class="action-links">
-            <a href="#" onclick="editData(this)">Edit</a> | <a href="#" onclick="hapusData(this)">Hapus</a>
-          </td>
-        `;
-        table.appendChild(row);
-
-        // Ambil data yang ada di tabel
-        const data = Array.from(table.rows).map(row => ({
-          no: row.cells[0].innerText,
-          tanggal: row.cells[1].innerText,
-          nomor: row.cells[2].innerText,
-          perihal: row.cells[3].innerText,
-          tujuan: row.cells[4].innerText
-        }));
-
-        // Simpan data ke GitHub
-        await simpanDataGitHub(data);
+        // Reset form setelah data disimpan
         document.getElementById("suratForm").reset();
       } else {
         alert("Harap isi semua data!");
       }
     }
 
-    // Fungsi untuk memuat data saat halaman dimuat
-    window.onload = async function() {
-      const data = await loadDataGitHub();
+    // Fungsi untuk memuat data dari Firebase
+    function loadData() {
       const table = document.getElementById("tabelSurat");
+      const suratRef = database.ref('suratkeluar');
 
-      data.forEach((item, index) => {
+      suratRef.on('child_added', function(data) {
         const row = document.createElement("tr");
+        const item = data.val();
+
         row.innerHTML = `
-          <td>${index + 1}</td>
           <td>${item.tanggal}</td>
           <td>${item.nomor}</td>
           <td>${item.perihal}</td>
           <td>${item.tujuan}</td>
-          <td class="action-links">
-            <a href="#" onclick="editData(this)">Edit</a> | <a href="#" onclick="hapusData(this)">Hapus</a>
-          </td>
         `;
         table.appendChild(row);
       });
     }
+
+    // Memuat data saat halaman dimuat
+    window.onload = loadData;
   </script>
 </head>
 <body>
   <h1>Surat Keluar SD Negeri Donggala Kodi</h1>
+  
+  <!-- Form Input Surat -->
   <form id="suratForm">
     <label for="tanggal">Tanggal:</label>
-    <input type="date" id="tanggal" required><br><br>
+    <input type="text" id="tanggal" name="tanggal" required><br><br>
     
     <label for="nomor">Nomor Surat:</label>
-    <input type="text" id="nomor" required><br><br>
-
+    <input type="text" id="nomor" name="nomor" required><br><br>
+    
     <label for="perihal">Perihal:</label>
-    <input type="text" id="perihal" required><br><br>
-
+    <input type="text" id="perihal" name="perihal" required><br><br>
+    
     <label for="tujuan">Tujuan:</label>
-    <input type="text" id="tujuan" required><br><br>
-
-    <button type="button" onclick="tambahSurat()">Tambah Surat</button>
+    <input type="text" id="tujuan" name="tujuan" required><br><br>
+    
+    <button type="button" onclick="saveData()">Tambah Surat</button>
   </form>
 
+  <!-- Tabel untuk Menampilkan Data Surat -->
   <h2>Daftar Surat Keluar</h2>
   <table id="tabelSurat" border="1">
     <thead>
       <tr>
-        <th>No</th>
         <th>Tanggal</th>
         <th>Nomor Surat</th>
         <th>Perihal</th>
         <th>Tujuan</th>
-        <th>Aksi</th>
       </tr>
     </thead>
     <tbody>
-      <!-- Data surat akan ditampilkan di sini -->
     </tbody>
   </table>
 </body>
