@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda Surat Keluar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #4CAF50;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    tr:hover {
+      background-color: #ddd;
+    }
+    .add-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .add-btn:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>Agenda Surat Keluar</h1>
+  
+  <a href="#" class="add-btn">Tambah Surat Keluar</a>
+
+  <table>
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Tanggal Surat</th>
+        <th>Nomor Surat</th>
+        <th>Perihal</th>
+        <th>Tujuan</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>2025-01-06</td>
+        <td>001/SK/I/2025</td>
+        <td>Undangan Rapat</td>
+        <td>PT ABC Indonesia</td>
+        <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>2025-01-05</td>
+        <td>002/SK/I/2025</td>
+        <td>Pengajuan Kerjasama</td>
+        <td>PT XYZ Jaya</td>
+        <td><a href="#">Edit</a> | <a href="#">Hapus</a></td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>
