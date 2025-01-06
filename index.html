@@ -8,61 +8,73 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <style>
     body {
-      background-color: white;
-      color: #333;
-      font-family: Arial, sans-serif;
-      margin: 20px;
+      background-color: #f8f9fa;
+      font-family: 'Arial', sans-serif;
     }
 
     h2, h4 {
       color: #d50000; /* Merah */
+      font-weight: 600;
     }
 
     .btn-primary {
-      background-color: #d50000; /* Merah */
+      background-color: #d50000;
       border-color: #b71c1c;
+      transition: all 0.3s ease;
     }
 
     .btn-primary:hover {
       background-color: #b71c1c;
       border-color: #d50000;
+      transform: scale(1.05);
     }
 
-    /* Styling untuk Tabel */
+    .card {
+      border-radius: 15px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    }
+
+    .card-header {
+      background-color: #d50000;
+      color: white;
+      font-size: 1.25rem;
+    }
+
+    .form-label {
+      color: #d50000;
+    }
+
     table {
       margin-top: 20px;
     }
 
     thead {
-      background-color: #d50000; /* Merah */
+      background-color: #d50000;
       color: white;
     }
 
     tbody {
-      background-color: #d50000; /* Merah */
+      background-color: #ffffff;
     }
 
     .table td, .table th {
-      color: white; /* Teks berwarna putih */
+      color: #333;
       vertical-align: middle;
     }
 
     .table-striped tbody tr:nth-of-type(odd) {
-      background-color: #b71c1c; /* Merah lebih gelap untuk baris ganjil */
+      background-color: #f2f2f2;
     }
 
     .table-hover tbody tr:hover {
-      background-color: #ffebee; /* Warna saat hover */
-    }
-
-    .form-label {
-      color: #d50000; /* Merah */
+      background-color: #ffebee;
+      cursor: pointer;
     }
 
     .action-links a {
-      color: white;
+      color: #d50000;
       text-decoration: none;
-      margin: 0 10px;
     }
 
     .action-links a:hover {
@@ -73,58 +85,87 @@
       text-align: center;
     }
 
+    .btn-secondary {
+      background-color: #009688;
+      border-color: #00796b;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: #00796b;
+      border-color: #009688;
+      transform: scale(1.05);
+    }
+
+    .form-control {
+      border-radius: 10px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
   </style>
 </head>
 <body>
 
-  <h2 class="text-center">Surat Keluar SD Negeri Donggala Kodi</h2>
+  <div class="container">
+    <h2 class="text-center mt-5">Surat Keluar SD Negeri Donggala Kodi</h2>
 
-  <!-- Form Input -->
-  <h4>Tambah Surat Keluar</h4>
-  <form id="suratForm" class="row g-3">
-    <div class="col-md-3">
-      <label for="tanggal" class="form-label">Tanggal Surat</label>
-      <input type="date" class="form-control" id="tanggal" required>
+    <!-- Card untuk Form Input -->
+    <div class="card">
+      <div class="card-header text-center">
+        <strong>Tambah Surat Keluar</strong>
+      </div>
+      <div class="card-body">
+        <form id="suratForm" class="row g-3">
+          <div class="col-md-3">
+            <label for="tanggal" class="form-label">Tanggal Surat</label>
+            <input type="date" class="form-control" id="tanggal" required>
+          </div>
+          <div class="col-md-3">
+            <label for="nomor" class="form-label">Nomor Surat</label>
+            <input type="text" class="form-control" id="nomor" required>
+          </div>
+          <div class="col-md-3">
+            <label for="perihal" class="form-label">Perihal</label>
+            <input type="text" class="form-control" id="perihal" required>
+          </div>
+          <div class="col-md-3">
+            <label for="tujuan" class="form-label">Tujuan</label>
+            <input type="text" class="form-control" id="tujuan" required>
+          </div>
+          <div class="col-12">
+            <button type="button" class="btn btn-primary" onclick="tambahSurat()">Tambah</button>
+          </div>
+        </form>
+      </div>
     </div>
-    <div class="col-md-3">
-      <label for="nomor" class="form-label">Nomor Surat</label>
-      <input type="text" class="form-control" id="nomor" required>
-    </div>
-    <div class="col-md-3">
-      <label for="perihal" class="form-label">Perihal</label>
-      <input type="text" class="form-control" id="perihal" required>
-    </div>
-    <div class="col-md-3">
-      <label for="tujuan" class="form-label">Tujuan</label>
-      <input type="text" class="form-control" id="tujuan" required>
-    </div>
-    <div class="col-12">
-      <button type="button" class="btn btn-primary" onclick="tambahSurat()">Tambah</button>
-    </div>
-  </form>
 
-  <!-- Pencarian -->
-  <input type="text" id="search" class="form-control mb-3" placeholder="Cari data..." onkeyup="cariData()">
+    <!-- Pencarian -->
+    <input type="text" id="search" class="form-control mb-3" placeholder="Cari data..." onkeyup="cariData()">
 
-  <!-- Tombol untuk Mengurutkan Data -->
-  <button type="button" class="btn btn-secondary mb-3" onclick="urutkanData()">Urutkan Nomor Surat (Terbesar ke Terkecil)</button>
+    <!-- Tombol untuk Mengurutkan Data -->
+    <button type="button" class="btn btn-secondary mb-3" onclick="urutkanData()">Urutkan Nomor Surat (Terbesar ke Terkecil)</button>
 
-  <!-- Tabel Surat Keluar -->
-  <table class="table table-striped table-hover">
-    <thead>
-      <tr>
-        <th>No</th>
-        <th>Tanggal Surat</th>
-        <th>Nomor Surat</th>
-        <th>Perihal</th>
-        <th>Tujuan</th>
-        <th>Aksi</th>
-      </tr>
-    </thead>
-    <tbody id="tabelSurat">
-      <!-- Data surat akan muncul di sini -->
-    </tbody>
-  </table>
+    <!-- Tabel Surat Keluar -->
+    <div class="card">
+      <div class="card-body">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Tanggal Surat</th>
+              <th>Nomor Surat</th>
+              <th>Perihal</th>
+              <th>Tujuan</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tabelSurat">
+            <!-- Data surat akan muncul di sini -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
   <!-- Script untuk Fungsi Dinamis -->
   <script>
