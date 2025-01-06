@@ -169,6 +169,7 @@
 
   <!-- Script untuk Fungsi Dinamis -->
   <script>
+    // Menambah data ke dalam tabel dan menyimpannya di Local Storage
     function tambahSurat() {
       const tanggal = document.getElementById("tanggal").value;
       const nomor = document.getElementById("nomor").value;
@@ -198,6 +199,7 @@
       }
     }
 
+    // Menyimpan data ke Local Storage
     function simpanData() {
       const table = document.getElementById("tabelSurat");
       const data = Array.from(table.rows).map(row => ({
@@ -211,6 +213,7 @@
       localStorage.setItem("agendaSurat", JSON.stringify(data));
     }
 
+    // Memuat data dari Local Storage
     function loadData() {
       const data = JSON.parse(localStorage.getItem("agendaSurat")) || [];
       const table = document.getElementById("tabelSurat");
@@ -231,6 +234,7 @@
       });
     }
 
+    // Fungsi pencarian
     function cariData() {
       const input = document.getElementById("search").value.toLowerCase();
       const rows = document.querySelectorAll("table tbody tr");
@@ -241,12 +245,14 @@
       });
     }
 
+    // Fungsi menghapus data
     function hapusData(elemen) {
       const row = elemen.parentElement.parentElement;
       row.remove();
       simpanData();
     }
 
+    // Fungsi mengedit data
     function editData(elemen) {
       const row = elemen.parentElement.parentElement;
       const cells = row.getElementsByTagName("td");
@@ -264,18 +270,17 @@
       const table = document.getElementById("tabelSurat");
       const rows = Array.from(table.rows);
 
-      // Urutkan berdasarkan nomor surat
       rows.sort((a, b) => {
         const nomorA = a.cells[2]?.innerText || 0;
         const nomorB = b.cells[2]?.innerText || 0;
         return nomorB - nomorA; // Urutkan dari terbesar
       });
 
-      // Bersihkan tabel dan masukkan kembali urutan yang sudah diurutkan
       rows.forEach(row => table.appendChild(row));
       simpanData();
     }
 
+    // Memuat data saat halaman pertama kali dimuat
     window.onload = loadData;
   </script>
 
